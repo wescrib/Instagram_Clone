@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -27,6 +28,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.parse.util.BottomNavViewHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -35,6 +37,8 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity {
 
     TextView currentUserTextview;
+
+    private static final String TAG = "HomeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,5 +178,12 @@ public class HomeActivity extends AppCompatActivity {
 //        Intent intent = new Intent(getApplication(), MainActivity.class);
 //        ParseUser.logOut();
 //        startActivity(intent);
+        setUpBottomNavView();
+    }
+    
+    private void setUpBottomNavView(){
+        Log.d(TAG, "setUpBottomNavView: init bottom nav");
+        BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+        BottomNavViewHelper.setUpBottomNavView(bottomNavigationViewEx);
     }
 }
