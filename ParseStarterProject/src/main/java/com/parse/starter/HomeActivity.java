@@ -1,6 +1,7 @@
 package com.parse.starter;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -37,6 +38,8 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity {
 
     TextView currentUserTextview;
+    private Context mContext = HomeActivity.this;
+    private static final int ACTIVITY_NUM = 0;
 
     private static final String TAG = "HomeActivity";
 
@@ -185,5 +188,9 @@ public class HomeActivity extends AppCompatActivity {
         Log.d(TAG, "setUpBottomNavView: init bottom nav");
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
         BottomNavViewHelper.setUpBottomNavView(bottomNavigationViewEx);
+        BottomNavViewHelper.enableNavigation(mContext, bottomNavigationViewEx);
+        Menu menu = bottomNavigationViewEx.getMenu();
+        MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
+        menuItem.setChecked(true);
     }
 }
