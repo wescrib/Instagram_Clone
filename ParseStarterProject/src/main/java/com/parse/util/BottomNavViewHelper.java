@@ -8,12 +8,12 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-import com.parse.starter.HomeActivity;
-import com.parse.starter.LikesActivity;
-import com.parse.starter.ProfileActivity;
+import com.parse.starter.Home.HomeActivity;
+import com.parse.starter.Likes.LikesActivity;
+import com.parse.starter.Profile.ProfileActivity;
 import com.parse.starter.R;
-import com.parse.starter.SearchActivity;
-import com.parse.starter.ShareActivity;
+import com.parse.starter.Search.SearchActivity;
+import com.parse.starter.Share.ShareActivity;
 
 public class BottomNavViewHelper {
     private static final String TAG = "BottomNavViewHelper";

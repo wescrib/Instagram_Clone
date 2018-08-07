@@ -1,4 +1,4 @@
-package com.parse.starter;
+package com.parse.starter.Likes;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,13 +9,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.parse.starter.R;
 import com.parse.util.BottomNavViewHelper;
 
-public class ProfileActivity extends AppCompatActivity {
+public class LikesActivity extends AppCompatActivity {
 
-    private static final String TAG = "ProfileActivity";
-    private Context mContext = ProfileActivity.this;
-    private static final int ACTIVITY_NUM = 4;
+    private static final String TAG = "LikesActivity";
+
+    private Context mContext = LikesActivity.this;
+    private static final int ACTIVITY_NUM = 3;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -1,4 +1,4 @@
-package com.parse.starter;
+package com.parse.starter.Share;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,14 +9,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.parse.starter.R;
 import com.parse.util.BottomNavViewHelper;
 
-public class LikesActivity extends AppCompatActivity {
+public class ShareActivity extends AppCompatActivity {
 
-    private static final String TAG = "LikesActivity";
-
-    private Context mContext = LikesActivity.this;
-    private static final int ACTIVITY_NUM = 3;
+    private static final String TAG = "ShareActivity";
+    private Context mContext = ShareActivity.this;
+    private static final int ACTIVITY_NUM = 2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

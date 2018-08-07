@@ -1,4 +1,4 @@
-package com.parse.starter;
+package com.parse.starter.Search;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,13 +9,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.parse.starter.R;
 import com.parse.util.BottomNavViewHelper;
 
-public class ShareActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity {
 
-    private static final String TAG = "ShareActivity";
-    private Context mContext = ShareActivity.this;
-    private static final int ACTIVITY_NUM = 2;
+
+    private static final String TAG = "SearchActivity";
+    private Context mContext = SearchActivity.this;
+    private static final int ACTIVITY_NUM = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
