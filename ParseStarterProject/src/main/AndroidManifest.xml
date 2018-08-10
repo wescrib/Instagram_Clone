@@ -34,6 +34,7 @@
         <activity android:name=".Search.SearchActivity"></activity>
         <activity android:name=".Profile.ProfileActivity"></activity>
         <activity android:name=".Likes.LikesActivity"></activity>
+        <activity android:name=".Profile.AccountSettingsActivity"></activity>
     </application>
 
 </manifest>
