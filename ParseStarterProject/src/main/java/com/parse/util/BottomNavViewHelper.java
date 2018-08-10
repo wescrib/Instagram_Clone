@@ -56,6 +56,7 @@ public class BottomNavViewHelper {
                         Intent intent5 = new Intent(context, ProfileActivity.class); //4
                         context.startActivity(intent5);
                         break;
+
                 }
                 return false;
             }
