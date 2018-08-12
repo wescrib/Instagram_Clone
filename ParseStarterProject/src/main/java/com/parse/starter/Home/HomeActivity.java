@@ -1,7 +1,6 @@
 package com.parse.starter.Home;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.parse.starter.R;
 import com.parse.util.BottomNavViewHelper;
+import com.parse.util.SectionsPagerAdapter;
 
 public class HomeActivity extends AppCompatActivity {
 
