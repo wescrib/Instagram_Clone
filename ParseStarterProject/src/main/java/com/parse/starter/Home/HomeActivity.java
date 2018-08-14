@@ -11,9 +11,11 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.starter.R;
 import com.parse.util.BottomNavViewHelper;
 import com.parse.util.SectionsPagerAdapter;
+import com.parse.util.UniversalImageLoader;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -28,8 +30,10 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        initImageLoader();
         setUpBottomNavView();
         setUpViewPager();
+
     }
 
     /******************* ADDS CAMERA, HOME, MESSAGES BUTTONS AT THE TOP**************************/
@@ -57,5 +61,11 @@ public class HomeActivity extends AppCompatActivity {
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
+    }
+
+    private void initImageLoader(){
+        UniversalImageLoader imageLoader = new UniversalImageLoader(mContext);
+
+        ImageLoader.getInstance().init(imageLoader.getConfig());
     }
 }

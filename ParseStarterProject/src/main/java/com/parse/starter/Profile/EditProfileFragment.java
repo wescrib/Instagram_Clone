@@ -25,7 +25,6 @@ public class EditProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_editprofile, container, false);
         mProfilePhoto = view.findViewById(R.id.profile_photo);
-        initImageLoader();
         setProfileImage();
 
 
@@ -41,12 +40,6 @@ public class EditProfileFragment extends Fragment {
         });
 
         return view;
-    }
-
-    private void initImageLoader(){
-        UniversalImageLoader imageLoader = new UniversalImageLoader(getActivity());
-
-        ImageLoader.getInstance().init(imageLoader.getConfig());
     }
 
     private void setProfileImage(){
