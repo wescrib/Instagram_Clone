@@ -25,9 +25,6 @@ android {
 
 dependencies {
     implementation 'com.android.support:appcompat-v7:26.1.0'
-//    implementation 'com.parse.bolts:bolts-tasks:1.4.0'
-//    implementation 'com.parse:parse-android:1.13.0'
-//    implementation 'com.google.android.gms:play-services:12.0.1'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
@@ -44,9 +41,12 @@ dependencies {
     //universal image loader
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 
-    //google firebase stuff
+    //google firebase authentication
     implementation 'com.google.firebase:firebase-core:16.0.1'
 
+    //needed for firebase user authentication
+    implementation 'com.google.firebase:firebase-auth:16.0.3'
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
 }
 //another firebase thing
 apply plugin: 'com.google.gms.google-services'

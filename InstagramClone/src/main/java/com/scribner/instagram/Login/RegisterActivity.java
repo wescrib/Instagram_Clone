@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.scribner.instagram.R;
 
-public class Register extends AppCompatActivity{
+public class RegisterActivity extends AppCompatActivity{
 
     private static final String TAG = "RegisterActivity";
 

@@ -1,6 +1,8 @@
 package com.scribner.instagram.Home;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -10,8 +12,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.scribner.instagram.Login.LoginActivity;
 import com.scribner.instagram.R;
 import com.scribner.util.BottomNavViewHelper;
 import com.scribner.util.SectionsPagerAdapter;
@@ -25,15 +30,67 @@ public class HomeActivity extends AppCompatActivity {
 
     private static final String TAG = "HomeActivity";
 
+    /******* firebase thing *********/
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        mAuth = FirebaseAuth.getInstance();
 
+        setUpFireBaseAuth();
         initImageLoader();
         setUpBottomNavView();
         setUpViewPager();
 
+    }
+
+    /*********************************************FIRE BASE***************************************/
+
+    /**
+     * set up firebase authentication object
+     */
+    private void setUpFireBaseAuth(){
+        Log.d(TAG, "setUpFireBaseAuth: setting up firebase authorization");
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                checkCurrentUser(user);
+                if(user != null){
+                    //signed in
+                    Log.d(TAG, "onAuthStateChanged: signed_in: " + user.getUid());
+                }else{
+                    //signed out
+                    Log.d(TAG, "onAuthStateChanged: signed_out");
+                }
+            }
+        };
+    }
+
+    private void checkCurrentUser(FirebaseUser user){
+        Log.d(TAG, "checkCurrentUser: checking if a user is logged in");
+        if(user == null){
+            Intent intent = new Intent(mContext, LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mAuthListener != null){
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 
     /******************* ADDS CAMERA, HOME, MESSAGES BUTTONS AT THE TOP**************************/
