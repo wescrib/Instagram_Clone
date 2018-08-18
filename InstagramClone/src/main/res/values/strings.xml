@@ -18,4 +18,8 @@
     <string name="title_activity_driver_location">Map</string>
     <string name="edit_profile_fragment">Edit Profile</string>
     <string name="sign_out_fragment">Sign Out</string>
+
+    <!-- firebase messages -->
+    <string name="auth_failed">Authentication failed</string>
+    <string name="auth_success">Authentication successful</string>
 </resources>
