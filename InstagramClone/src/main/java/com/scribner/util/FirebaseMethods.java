@@ -10,6 +10,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.scribner.instagram.Models.User;
 import com.scribner.instagram.R;
 
 public class FirebaseMethods {
@@ -26,6 +28,26 @@ public class FirebaseMethods {
         if(mAuth.getCurrentUser() != null){
             userId = mAuth.getCurrentUser().getUid();
         }
+    }
+
+    public boolean checkIfUsernameExists(String username, DataSnapshot snapshot){
+        Log.d(TAG, "checkIfUsernameExists: checking if " + username + "exists");
+        User user = new User();
+
+        //looping through firebase datastore
+        for(DataSnapshot ds: snapshot.getChildren()){
+            Log.d(TAG, "checkIfUsernameExists: " + ds);
+
+            //attaching username to user object
+            user.setUsername(ds.getValue(User.class).getUsername());
+
+            //comparing username being applied for matches any username in firebase db
+            if(StringManipulation.expandUsername(user.getUsername()).equals(username)){
+                Log.d(TAG, "checkIfUsernameExists: FOUND MATCH: " + user.getUsername());
+                return true;
+            }
+        }
+        return false;
     }
 
 

@@ -15,6 +15,11 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.scribner.instagram.R;
 import com.scribner.util.FirebaseMethods;
 
@@ -25,6 +30,8 @@ public class RegisterActivity extends AppCompatActivity{
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseMethods firebaseMethods;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference myRef;
 
     private Context mContext;
     private ProgressBar mProgressBar;
@@ -33,6 +40,8 @@ public class RegisterActivity extends AppCompatActivity{
     private Button btnRegister;
 
     private String email, password, username, phoneNumber;
+
+    private String append = "";
 
 
     @Override
@@ -99,6 +108,9 @@ public class RegisterActivity extends AppCompatActivity{
     private void setUpFireBaseAuth(){
         Log.d(TAG, "setUpFireBaseAuth: setting up firebase authorization");
         mAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = mFirebaseDatabase.getReference();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -107,6 +119,29 @@ public class RegisterActivity extends AppCompatActivity{
                 if(user != null){
                     //signed in
                     Log.d(TAG, "onAuthStateChanged: signed_in: " + user.getUid());
+                    myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        //success method
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            // first check: make sure username doesnt already exist:
+                            if(firebaseMethods.checkIfUsernameExists(username, dataSnapshot)){
+                                //push method randomly generates a key for firebase db
+                                append = myRef.push().getKey().substring(3,10);
+                                Log.d(TAG, "onDataChange: username already exists. appending random string to name: " + append);
+                            }
+                            username = username + append;
+
+                            //add new user to database
+
+                            //add new user account settings to database
+                        }
+
+                        //error method
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }else{
                     //signed out
                     Log.d(TAG, "onAuthStateChanged: signed_out");
