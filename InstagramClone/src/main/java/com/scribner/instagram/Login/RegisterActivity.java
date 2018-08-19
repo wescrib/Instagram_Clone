@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.scribner.instagram.R;
+import com.scribner.util.FirebaseMethods;
 
 public class RegisterActivity extends AppCompatActivity{
 
@@ -23,6 +24,7 @@ public class RegisterActivity extends AppCompatActivity{
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseMethods firebaseMethods;
 
     private Context mContext;
     private ProgressBar mProgressBar;
@@ -38,8 +40,11 @@ public class RegisterActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         Log.d(TAG, "onCreate: started");
+        mContext = RegisterActivity.this;
+        firebaseMethods = new FirebaseMethods(mContext);
         initWidgets();
         setUpFireBaseAuth();
+        init();
 
     }
 
@@ -55,6 +60,8 @@ public class RegisterActivity extends AppCompatActivity{
                 if(isNotMissingInputs(email, username, password, phoneNumber)){
                     mProgressBar.setVisibility(View.VISIBLE);
                     mLoadingPleaseWait.setVisibility(View.VISIBLE);
+
+                    firebaseMethods.registerNewEmail(email, password, username, phoneNumber);
                 }
             }
         });
@@ -83,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity{
         btnRegister = findViewById(R.id.btn_register);
 
         mProgressBar.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.GONE);
+        mLoadingPleaseWait.setVisibility(View.GONE);
     }
 
     /**
