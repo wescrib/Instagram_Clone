@@ -132,14 +132,16 @@ public class RegisterActivity extends AppCompatActivity{
                             username = username + append;
 
                             //add new user to database
+                            firebaseMethods.addNewUser(email, username, "","","");
 
-                            //add new user account settings to database
-                        }
+                            Toast.makeText(mContext, "Signup succesful. Sending verification email.", Toast.LENGTH_LONG).show();
+
+                            }
 
                         //error method
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                            Toast.makeText(mContext, "didnt even make it to firebase", Toast.LENGTH_LONG).show();
                         }
                     });
                 }else{
