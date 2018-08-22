@@ -52,7 +52,7 @@ public class RegisterActivity extends AppCompatActivity{
         mContext = RegisterActivity.this;
         firebaseMethods = new FirebaseMethods(mContext);
         initWidgets();
-        setUpFireBaseAuth();
+        setupFirebaseAuth();
         init();
 
     }
@@ -105,8 +105,9 @@ public class RegisterActivity extends AppCompatActivity{
     /**
      * set up firebase authentication object
      */
-    private void setUpFireBaseAuth(){
-        Log.d(TAG, "setUpFireBaseAuth: setting up firebase authorization");
+    private void setupFirebaseAuth(){
+        Log.d(TAG, "setupFirebaseAuth: setting up firebase auth.");
+
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
@@ -116,38 +117,38 @@ public class RegisterActivity extends AppCompatActivity{
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                if(user != null){
-                    //signed in
-                    Log.d(TAG, "onAuthStateChanged: signed_in: " + user.getUid());
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+
                     myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        //success method
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            // first check: make sure username doesnt already exist:
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            //1st check: Make sure the username is not already in use
                             if(firebaseMethods.checkIfUsernameExists(username, dataSnapshot)){
-                                //push method randomly generates a key for firebase db
                                 append = myRef.push().getKey().substring(3,10);
-                                Log.d(TAG, "onDataChange: username already exists. appending random string to name: " + append);
+                                Log.d(TAG, "onDataChange: username already exists. Appending random string to name: " + append);
                             }
                             username = username + append;
 
-                            //add new user to database
-                            firebaseMethods.addNewUser(email, username, "","","");
+                            //add new user to the database
+                            firebaseMethods.addNewUser(email, username, "", "", "");
 
-                            Toast.makeText(mContext, "Signup succesful. Sending verification email.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mContext, "Signup successful. Sending verification email.", Toast.LENGTH_SHORT).show();
 
-                            }
+                        }
 
-                        //error method
                         @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Toast.makeText(mContext, "didnt even make it to firebase", Toast.LENGTH_LONG).show();
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.e(TAG, "onCancelled: ", databaseError.toException());
                         }
                     });
-                }else{
-                    //signed out
-                    Log.d(TAG, "onAuthStateChanged: signed_out");
+
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
+                // ...
             }
         };
     }

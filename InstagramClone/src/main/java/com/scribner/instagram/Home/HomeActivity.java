@@ -45,6 +45,8 @@ public class HomeActivity extends AppCompatActivity {
         setUpBottomNavView();
         setUpViewPager();
 
+        mAuth.signOut();
+
     }
 
     /*********************************************FIRE BASE***************************************/
