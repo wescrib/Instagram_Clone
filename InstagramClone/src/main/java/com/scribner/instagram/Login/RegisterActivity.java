@@ -136,6 +136,8 @@ public class RegisterActivity extends AppCompatActivity{
 
                             Toast.makeText(mContext, "Signup successful. Sending verification email.", Toast.LENGTH_SHORT).show();
 
+                            mAuth.signOut();
+                            finish();
                         }
 
                         @Override

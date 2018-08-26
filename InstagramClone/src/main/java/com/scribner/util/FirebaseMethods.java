@@ -72,8 +72,8 @@ public class FirebaseMethods {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
                             userId = mAuth.getCurrentUser().getUid();
+                            sendVerificationEmail();
                             Log.d(TAG, "createUserWithEmail:success " + userId);
 
 
@@ -89,10 +89,32 @@ public class FirebaseMethods {
                 });
     }
 
+    public void sendVerificationEmail(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null){
+            user.sendEmailVerification()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(!task.isSuccessful()){
+                                Toast.makeText(mContext, "Could not send verification email.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
 
-
+    /**
+     * Add info to the users nodes
+     * Add info to the user_account_settings node
+     * @param email
+     * @param username
+     * @param description
+     * @param website
+     * @param profile_photo
+     */
     public void addNewUser(String email, String username, String description, String website, String profile_photo){
-        User user = new User(userId, 1, email, StringManipulation.collapseUsername(username));
+        User user = new User(userId, 1, email, StringManipulation.collapseUsername(username).toLowerCase());
         myRef.child(mContext.getString(R.string.dbname_users))
                 //takes user id and builds a new document in firebase basically
                 .child(userId)

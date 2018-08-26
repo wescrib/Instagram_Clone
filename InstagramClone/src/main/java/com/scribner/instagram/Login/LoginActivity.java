@@ -86,21 +86,33 @@ public class LoginActivity extends AppCompatActivity{
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
+                                    FirebaseUser user = mAuth.getCurrentUser();
+
+                                    if (!task.isSuccessful()) {
                                         // Sign in success, update UI with the signed-in user's information
-                                        Log.d(TAG, "signInWithEmail:success");
+                                    Log.w(TAG, "signInWithEmail: FAILURE");
                                         mProgressBar.setVisibility(View.GONE);
                                         mPleaseWait.setVisibility(View.GONE);
-                                        FirebaseUser user = mAuth.getCurrentUser();
-                                        Toast.makeText(LoginActivity.this, getString(R.string.auth_success), Toast.LENGTH_SHORT).show();
-
+                                        Toast.makeText(mContext, "Failed to Authenticate", Toast.LENGTH_SHORT).show();
+                                        mProgressBar.setVisibility(View.GONE);
+                                        mPleaseWait.setVisibility(View.GONE);
 
                                     } else {
-                                        // If sign in fails, display a message to the user.
-                                        Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                        mProgressBar.setVisibility(View.GONE);
-                                        mPleaseWait.setVisibility(View.GONE);
-                                        Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_SHORT).show();
+                                        try{
+                                            //if email is verified, login, else toast that it has not been verified.
+                                            if(user.isEmailVerified()){
+                                                Log.d(TAG, "onComplete: email is VERIFIED");
+                                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                                startActivity(intent);
+                                            }else{
+                                                Toast.makeText(mContext, "Email is not verified", Toast.LENGTH_SHORT).show();
+                                                mProgressBar.setVisibility(View.GONE);
+                                                mPleaseWait.setVisibility(View.GONE);
+                                                mAuth.signOut();
+                                            }
+                                        }catch (NullPointerException npe){
+                                            Log.e(TAG, "onComplete: " + npe.getMessage());
+                                        }
 
                                     }
 
