@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.scribner.instagram.Models.User;
 import com.scribner.instagram.Models.UserAccountSettings;
+import com.scribner.instagram.Models.UserSettings;
 import com.scribner.instagram.R;
 
 public class FirebaseMethods {
@@ -32,24 +33,24 @@ public class FirebaseMethods {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
 
-        if(mAuth.getCurrentUser() != null){
+        if (mAuth.getCurrentUser() != null) {
             userId = mAuth.getCurrentUser().getUid();
         }
     }
 
-    public boolean checkIfUsernameExists(String username, DataSnapshot snapshot){
+    public boolean checkIfUsernameExists(String username, DataSnapshot snapshot) {
         Log.d(TAG, "checkIfUsernameExists: checking if " + username + "exists");
         User user = new User();
 
         //looping through firebase datastore
-        for(DataSnapshot ds: snapshot.child(userId).getChildren()){
+        for (DataSnapshot ds : snapshot.child(userId).getChildren()) {
             Log.d(TAG, "checkIfUsernameExists: " + ds);
 
             //attaching username to user object
             user.setUsername(ds.getValue(User.class).getUsername());
 
             //comparing username being applied for matches any username in firebase db
-            if(StringManipulation.expandUsername(user.getUsername()).equals(username)){
+            if (StringManipulation.expandUsername(user.getUsername()).equals(username)) {
                 Log.d(TAG, "checkIfUsernameExists: FOUND MATCH: " + user.getUsername());
                 return true;
             }
@@ -60,6 +61,7 @@ public class FirebaseMethods {
 
     /**
      * Reigster a new email and password to Firebase Authentication
+     *
      * @param email
      * @param password
      * @param username
@@ -89,14 +91,14 @@ public class FirebaseMethods {
                 });
     }
 
-    public void sendVerificationEmail(){
+    public void sendVerificationEmail() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user != null){
+        if (user != null) {
             user.sendEmailVerification()
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if(!task.isSuccessful()){
+                            if (!task.isSuccessful()) {
                                 Toast.makeText(mContext, "Could not send verification email.", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -107,23 +109,25 @@ public class FirebaseMethods {
     /**
      * Add info to the users nodes
      * Add info to the user_account_settings node
+     *
      * @param email
      * @param username
      * @param description
      * @param website
      * @param profile_photo
      */
-    public void addNewUser(String email, String username, String description, String website, String profile_photo){
+    public void addNewUser(String email, String username, String description, String website, String profile_photo) {
         User user = new User(userId, 1, email, StringManipulation.collapseUsername(username).toLowerCase());
         myRef.child(mContext.getString(R.string.dbname_users))
                 //takes user id and builds a new document in firebase basically
                 .child(userId)
                 .setValue(user);
 
-        UserAccountSettings settings = new UserAccountSettings(description,
+        UserAccountSettings settings = new UserAccountSettings(
+                description,
                 username,
                 profile_photo,
-                username,
+                StringManipulation.collapseUsername(username).toLowerCase(),
                 website,
                 0,
                 0,
@@ -133,5 +137,108 @@ public class FirebaseMethods {
         myRef.child(mContext.getString(R.string.dbname_user_account_settings))
                 .child(userId)
                 .setValue(settings);
+    }
+
+    /**
+     * Gets the account settings for the current user
+     * Database: user_account_settings node
+     *
+     * @param dataSnap
+     * @return
+     */
+    private UserSettings getUserSettings(DataSnapshot dataSnap) {
+        Log.d(TAG, "getUserAccountSettings: getting user account settings from firebase");
+
+        UserAccountSettings settings = new UserAccountSettings();
+        User user = new User();
+
+        //user_account_settings node
+        for (DataSnapshot ds : dataSnap.getChildren()) {
+            //if the key (the key is basically the name of the table) == user_account_settings.
+            //its iterating through the database looking for the key?
+            if (ds.getKey().equals(mContext.getString(R.string.dbname_user_account_settings))) {
+                Log.d(TAG, "getUserAccountSettings: datasnapshot: " + ds);
+
+                try {
+                    settings.setDisplay_name(
+                            ds.child(userId)
+                                    .getValue(UserAccountSettings.class)
+                                    .getDisplay_name()
+
+                    );
+                    settings.setDisplay_name(
+                            ds.child(userId)
+                                    .getValue(UserAccountSettings.class)
+                                    .getUsername()
+
+                    );
+                    settings.setWebsite(
+                            ds.child(userId)
+                                    .getValue(UserAccountSettings.class)
+                                    .getWebsite()
+
+                    );
+
+                    settings.setDescription(
+                            ds.child(userId)
+                                    .getValue(UserAccountSettings.class)
+                                    .getDescription()
+
+                    );
+                    settings.setProfile_photo(
+                            ds.child(userId)
+                                    .getValue(UserAccountSettings.class)
+                                    .getProfile_photo()
+
+                    );
+                    settings.setPosts(
+                            ds.child(userId)
+                                    .getValue(UserAccountSettings.class)
+                                    .getPosts()
+
+                    );
+                    settings.setFollowers(
+                            ds.child(userId)
+                                    .getValue(UserAccountSettings.class)
+                                    .getFollowers()
+
+                    );
+                    settings.setFollowing(
+                            ds.child(userId)
+                                    .getValue(UserAccountSettings.class)
+                                    .getFollowing()
+
+                    );
+
+                    Log.d(TAG, "getUserAccountSettings: retreived user_account_settings: " + settings.toString());
+                } catch (Exception e) {
+                    Log.e(TAG, "getUserAccountSettings: " + e.getMessage());
+                }
+            }
+            if (ds.getKey().equals(mContext.getString(R.string.dbname_users))) {
+                Log.d(TAG, "getUserAccountSettings: datasnapshot: " + ds);
+
+                user.setUsername(ds.child(userId)
+                        .getValue(User.class)
+                        .getUsername());
+
+                user.setEmail(ds.child(userId)
+                        .getValue(User.class)
+                        .getEmail());
+
+                user.setUser_id(ds.child(userId)
+                        .getValue(User.class)
+                        .getUser_id());
+
+                user.setPhone_number(ds.child(userId)
+                        .getValue(User.class)
+                        .getPhone_number());
+
+                Log.d(TAG, "getUserAccountSettings: retreived user: " + user.toString());
+            }
+        }
+
+        return new UserSettings(user, settings);
+
     }
 }
