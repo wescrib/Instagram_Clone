@@ -8,16 +8,6 @@
         android:background="@color/white"
         >
 
-        <!-- top bar -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/relLayout1"
-            >
-            <include layout="@layout/snippet_top_profilebar"/>
-
-        </RelativeLayout>
-
         <!-- middle section -->
         <RelativeLayout
             android:layout_width="match_parent"
@@ -94,6 +84,16 @@
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:text="My life can be described that kind of pizza where all the cheese comes off in the first bite."
+
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/website"
+                    android:textColor="@color/blue_link"
+                    android:text="Website goes here"
+                    android:textSize="16sp"
+                    android:layout_marginTop="5dp"
 
                     />
 
