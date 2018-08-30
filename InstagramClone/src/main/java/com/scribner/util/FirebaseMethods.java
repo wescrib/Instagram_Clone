@@ -166,7 +166,7 @@ public class FirebaseMethods {
                                     .getDisplay_name()
 
                     );
-                    settings.setDisplay_name(
+                    settings.setUsername(
                             ds.child(userId)
                                     .getValue(UserAccountSettings.class)
                                     .getUsername()
