@@ -88,6 +88,19 @@ public class ProfileFragment extends Fragment {
         setUpBottomNavView();
         setUpFireBaseAuth();
 
+        TextView editProfile = view.findViewById(R.id.textEditProfile);
+        editProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //edit profile is a fragment so i need to go to account settings THEN edit profile
+                Log.d(TAG, "onClick: navigating to " + mContext.getString(R.string.edit_profile_fragment));
+                Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+                //putExtra(to, from)
+                intent.putExtra(getString(R.string.calling_activity), getString(R.string.profile_activity));
+                startActivity(intent);
+            }
+        });
+
         return view;
     }
 

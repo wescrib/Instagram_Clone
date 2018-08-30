@@ -1,6 +1,7 @@
 package com.scribner.instagram.Profile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -45,6 +46,7 @@ public class AccountSettingsActivity extends AppCompatActivity{
         setUpSettingsList();
         SetUpFragments();
         setUpBottomNavView();
+        getIncomingIntent();
 
         ImageView backArrow = findViewById(R.id.backArrow);
         backArrow.setOnClickListener(new View.OnClickListener(){
@@ -55,6 +57,15 @@ public class AccountSettingsActivity extends AppCompatActivity{
                 finish();
             }
         });
+    }
+    
+    private void getIncomingIntent(){
+        Intent intent = getIntent();
+        //if the incoming intent has a string (calling activity) then it will go directly to the edit profile fragment
+        if(intent.hasExtra(getString(R.string.calling_activity))){
+            Log.d(TAG, "getIncomingIntent: received incoming intent from " + getString(R.string.profile_activity));
+            setViewPager(pagerAdapter.getFragmentNumber(getString(R.string.edit_profile_fragment)));
+        }
     }
 
     /******** BOTTOM NAV VIEW SETUP ***********/
