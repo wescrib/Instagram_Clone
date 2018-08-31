@@ -38,25 +38,25 @@ public class FirebaseMethods {
         }
     }
 
-    public boolean checkIfUsernameExists(String username, DataSnapshot snapshot) {
-        Log.d(TAG, "checkIfUsernameExists: checking if " + username + "exists");
-        User user = new User();
-
-        //looping through firebase datastore
-        for (DataSnapshot ds : snapshot.child(userId).getChildren()) {
-            Log.d(TAG, "checkIfUsernameExists: " + ds);
-
-            //attaching username to user object
-            user.setUsername(ds.getValue(User.class).getUsername());
-
-            //comparing username being applied for matches any username in firebase db
-            if (StringManipulation.expandUsername(user.getUsername()).equals(username)) {
-                Log.d(TAG, "checkIfUsernameExists: FOUND MATCH: " + user.getUsername());
-                return true;
-            }
-        }
-        return false;
-    }
+//    public boolean checkIfUsernameExists(String username, DataSnapshot snapshot) {
+//        Log.d(TAG, "checkIfUsernameExists: checking if " + username + "exists");
+//        User user = new User();
+//
+//        //looping through firebase datastore
+//        for (DataSnapshot ds : snapshot.child(userId).getChildren()) {
+//            Log.d(TAG, "checkIfUsernameExists: " + ds);
+//
+//            //attaching username to user object
+//            user.setUsername(ds.getValue(User.class).getUsername());
+//
+//            //comparing username being applied for matches any username in firebase db
+//            if (StringManipulation.expandUsername(user.getUsername()).equals(username)) {
+//                Log.d(TAG, "checkIfUsernameExists: FOUND MATCH: " + user.getUsername());
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
 
     /**
@@ -240,5 +240,18 @@ public class FirebaseMethods {
 
         return new UserSettings(user, settings);
 
+    }
+
+    public void updateUsername(String username) {
+        Log.d(TAG, "updateUsername: to " + username);
+        myRef.child(mContext.getString(R.string.dbname_users))
+                .child(userId)
+                .child(mContext.getString(R.string.field_username))
+                .setValue(username);
+
+        myRef.child(mContext.getString(R.string.dbname_user_account_settings))
+                .child(userId)
+                .child(mContext.getString(R.string.field_username))
+                .setValue(username);
     }
 }

@@ -55,12 +55,12 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/username"
+                    android:id="@+id/etUsername"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="40dp"
                     android:background="@null"
                     android:inputType="textNoSuggestions"
-                    android:hint="Name"
+                    android:hint="Username"
                     android:textSize="14dp"
                     />
             </RelativeLayout>
@@ -89,7 +89,7 @@
                     android:layout_marginStart="40dp"
                     android:background="@null"
                     android:inputType="textNoSuggestions"
-                    android:hint="Display Name"
+                    android:hint="Full Name"
                     android:textSize="14dp"
                     />
             </RelativeLayout>
@@ -113,7 +113,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/websiteEditText"
+                    android:id="@+id/website"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="40dp"
                     android:background="@null"
@@ -145,7 +145,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/bio"
+                    android:id="@+id/description"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="40dp"
                     android:background="@null"
@@ -192,13 +192,13 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="40dp"
                     android:background="@null"
-                    android:inputType="textNoSuggestions"
+                    android:inputType="textEmailAddress"
                     android:hint="Email"
                     android:textSize="14dp"
                     />
             </RelativeLayout>
 
-            <!-- emaile line -->
+            <!-- phone number line -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -219,7 +219,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/phone"
+                    android:id="@+id/phone_number"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="40dp"
                     android:background="@null"

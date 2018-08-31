@@ -19,11 +19,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.scribner.instagram.Models.User;
 import com.scribner.instagram.R;
 import com.scribner.util.FirebaseMethods;
 
-public class RegisterActivity extends AppCompatActivity{
+public class RegisterActivity extends AppCompatActivity {
 
     private static final String TAG = "RegisterActivity";
 
@@ -57,7 +59,7 @@ public class RegisterActivity extends AppCompatActivity{
 
     }
 
-    private void init(){
+    private void init() {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity{
                 username = mUsername.getText().toString();
                 phoneNumber = mPhoneNumber.getText().toString();
 
-                if(isNotMissingInputs(email, username, password, phoneNumber)){
+                if (isNotMissingInputs(email, username, password, phoneNumber)) {
                     mProgressBar.setVisibility(View.VISIBLE);
                     mLoadingPleaseWait.setVisibility(View.VISIBLE);
 
@@ -76,9 +78,9 @@ public class RegisterActivity extends AppCompatActivity{
         });
     }
 
-    private boolean isNotMissingInputs(String email, String username, String password, String phoneNumber){
-        if(email.equals("") ||username.equals("") ||password.equals("") ||phoneNumber.equals("")){
-            Toast.makeText(mContext,"Missing a field", Toast.LENGTH_SHORT).show();
+    private boolean isNotMissingInputs(String email, String username, String password, String phoneNumber) {
+        if (email.equals("") || username.equals("") || password.equals("") || phoneNumber.equals("")) {
+            Toast.makeText(mContext, "Missing a field", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -87,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity{
     /**
      * init activity widgets
      */
-    private void initWidgets(){
+    private void initWidgets() {
         Log.d(TAG, "initWidgets: initializing widgets");
         mProgressBar = findViewById(R.id.progressBar);
         mLoadingPleaseWait = findViewById(R.id.loadingpleasewait);
@@ -102,10 +104,54 @@ public class RegisterActivity extends AppCompatActivity{
         mLoadingPleaseWait.setVisibility(View.GONE);
     }
 
+    private void usernameLookup(final String username) {
+        Log.d(TAG, "usernameLookup: " + username);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        Query q = ref
+                //look for table
+                .child(getString(R.string.dbname_users))
+                //look for field in table
+                .orderByChild(getString(R.string.field_username))
+                .equalTo(username);
+
+        q.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot singleDS : dataSnapshot.getChildren()) {
+                    if (singleDS.exists()) {
+                        Log.d(TAG, "usernameLookup: MATCH FOUND: " + singleDS.getValue(User.class).getUsername());
+                        append = myRef.push().getKey().substring(3, 10);
+                        Log.d(TAG, "onDataChange: username already exists. Appending random string to name: " + append);
+                    }
+                }
+
+                //1st check: Make sure the username is not already in use
+                String newUsername = "";
+                newUsername = username + append;
+
+                //add new user to the database
+                firebaseMethods.addNewUser(email, newUsername, "", "", "");
+
+                Toast.makeText(mContext, "Signup successful. Sending verification email.", Toast.LENGTH_SHORT).show();
+
+                mAuth.signOut();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+
+    }
+
     /**
      * set up firebase authentication object
      */
-    private void setupFirebaseAuth(){
+    private void setupFirebaseAuth() {
         Log.d(TAG, "setupFirebaseAuth: setting up firebase auth.");
 
         mAuth = FirebaseAuth.getInstance();
@@ -124,19 +170,7 @@ public class RegisterActivity extends AppCompatActivity{
                     myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            //1st check: Make sure the username is not already in use
-                            if(firebaseMethods.checkIfUsernameExists(username, dataSnapshot)){
-                                append = myRef.push().getKey().substring(3,10);
-                                Log.d(TAG, "onDataChange: username already exists. Appending random string to name: " + append);
-                            }
-                            username = username + append;
-
-                            //add new user to the database
-                            firebaseMethods.addNewUser(email, username, "", "", "");
-
-                            Toast.makeText(mContext, "Signup successful. Sending verification email.", Toast.LENGTH_SHORT).show();
-
-                            mAuth.signOut();
+                            usernameLookup(username);
                             finish();
                         }
 
@@ -165,16 +199,16 @@ public class RegisterActivity extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
-        if(mAuthListener != null){
+        if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
 
-    private boolean isStringNull(String string){
+    private boolean isStringNull(String string) {
         Log.d(TAG, "isStringNull: checking if string is null");
-        if(string.equals("")){
+        if (string.equals("")) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
