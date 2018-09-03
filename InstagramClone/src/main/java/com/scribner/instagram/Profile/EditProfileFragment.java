@@ -13,15 +13,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.util.CrashUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.scribner.dialogs.ConfirmPasswordDialog;
 import com.scribner.instagram.Models.User;
 import com.scribner.instagram.Models.UserAccountSettings;
 import com.scribner.instagram.Models.UserSettings;
@@ -31,7 +36,7 @@ import com.scribner.util.UniversalImageLoader;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class EditProfileFragment extends Fragment {
+public class EditProfileFragment extends Fragment implements ConfirmPasswordDialog.OnConfirmPasswordListener {
 
     private static final String TAG = "EditProfileFragment";
 
@@ -51,7 +56,7 @@ public class EditProfileFragment extends Fragment {
     private UserSettings mUserSettings;
 
     private String userId;
-    
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,11 +72,11 @@ public class EditProfileFragment extends Fragment {
         mFirebaseMethods = new FirebaseMethods(getActivity());
 
 //        setProfileImage();
-            setUpFireBaseAuth();
+        setUpFireBaseAuth();
 
         //back button
         ImageView backArrow = view.findViewById(com.scribner.instagram.R.id.backArrow);
-        backArrow.setOnClickListener(new View.OnClickListener(){
+        backArrow.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -79,7 +84,7 @@ public class EditProfileFragment extends Fragment {
                 getActivity().finish();
             }
         });
-        
+
         ImageView checkMark = view.findViewById(R.id.saveChanges);
         checkMark.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +101,7 @@ public class EditProfileFragment extends Fragment {
      * Retrieves data from widgets and submits it to the database
      * Before execution it checks for a unique username
      */
-    private void saveProfileSettings(){
+    private void saveProfileSettings() {
         final String displayName = mDisplayName.getText().toString();
         final String username = mUsername.getText().toString();
         final String website = mWebsite.getText().toString();
@@ -104,34 +109,29 @@ public class EditProfileFragment extends Fragment {
         final String email = mEmail.getText().toString();
         final long phoneNumber = Long.parseLong(mPhoneNumber.getText().toString());
 
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        //user did not change their username
+        if (!mUserSettings.getUser().getUsername().equals(username)) {
+            usernameLookup(username);
+        }
+        //user totally changed their username. check for unique value
+        if (!mUserSettings.getUser().getEmail().equals(email)) {
+
+            //1: reauthenticate email
+            ConfirmPasswordDialog dialog = new ConfirmPasswordDialog();
+            dialog.show(getFragmentManager(), getString(R.string.confirm_password_dialog));
+            dialog.setTargetFragment(EditProfileFragment.this, 1);
+            //2: check if email already exists
+
+            //3: change the email
+        }
 
 
-
-                //user did not change their username
-                if(!mUserSettings.getUser().getUsername().equals(username)){
-                    usernameLookup(username);
-                }
-                //user totally changed their username. check for unique value
-                else{
-
-                }
-
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
+
 
     /**
      * checks if username already exists in database
+     *
      * @param username
      */
     private void usernameLookup(final String username) {
@@ -148,15 +148,15 @@ public class EditProfileFragment extends Fragment {
         q.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()){
+                if (!dataSnapshot.exists()) {
                     //add username
                     mFirebaseMethods.updateUsername(username);
                     Toast.makeText(getActivity(), "Saved new settings", Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
 
-                for(DataSnapshot singleDS : dataSnapshot.getChildren()){
-                    if(singleDS.exists()){
+                for (DataSnapshot singleDS : dataSnapshot.getChildren()) {
+                    if (singleDS.exists()) {
                         Log.d(TAG, "usernameLookup: MATCH FOUND: " + singleDS.getValue(User.class).getUsername());
                         Toast.makeText(getActivity(), "Username already exists", Toast.LENGTH_SHORT).show();
                     }
@@ -170,7 +170,7 @@ public class EditProfileFragment extends Fragment {
         });
     }
 
-    private void setProfileWidgets(UserSettings userSettings){
+    private void setProfileWidgets(UserSettings userSettings) {
         //Log.d(TAG, "setProfileWidgets: setting widgets with data from firebase database\n" + userSettings.getSettings().toString());
 
         UserAccountSettings settings = userSettings.getSettings();
@@ -201,7 +201,7 @@ public class EditProfileFragment extends Fragment {
     /**
      * set up firebase authentication object
      */
-    private void setUpFireBaseAuth(){
+    private void setUpFireBaseAuth() {
         Log.d(TAG, "setUpFireBaseAuth: setting up firebase authorization");
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -213,10 +213,10 @@ public class EditProfileFragment extends Fragment {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 //                checkCurrentUser(user);
-                if(user != null){
+                if (user != null) {
                     //signed in
                     Log.d(TAG, "onAuthStateChanged: signed_in: " + user.getUid());
-                }else{
+                } else {
                     //signed out
                     Log.d(TAG, "onAuthStateChanged: signed_out");
                 }
@@ -260,8 +260,67 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if(mAuthListener != null){
+        if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    @Override
+    public void onConfirmPassword(String password) {
+        Log.d(TAG, "onConfirmPassword: got password");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        AuthCredential credential = EmailAuthProvider.getCredential(mAuth.getCurrentUser().getEmail(), password);
+
+        mAuth.getCurrentUser().reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "onComplete: re-authenticated");
+
+                            //check to see if email is not already in firebase
+                            mAuth.fetchSignInMethodsForEmail(mEmail.getText().toString()).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+
+                                    try {
+
+                                        if (task.isSuccessful()) {
+                                            //if check returns a result, the email must already exist
+                                            if (task.getResult().getSignInMethods().size() == 1) {
+                                                Log.d(TAG, "onComplete: email is already in use");
+                                                Toast.makeText(getActivity(), "Email already in use", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Log.d(TAG, "onComplete: Email is available");
+                                                //email is aavailble is its going to be updated
+                                                mAuth.getCurrentUser().updateEmail(mEmail.getText().toString())
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                Log.d(TAG, "onComplete: email updated");
+                                                                mFirebaseMethods.updateEmail(mEmail.getText().toString());
+                                                                Toast.makeText(getActivity(), "Email updated", Toast.LENGTH_SHORT).show();
+
+                                                            }
+                                                        });
+                                            }
+                                        }
+
+                                    } catch (NullPointerException npe) {
+                                        Log.e(TAG, "onComplete: " + npe.getMessage());
+                                    }
+
+                                }
+                            });
+
+
+                        } else {
+                            Log.d(TAG, "onComplete: re-authentication failed");
+                        }
+
+                    }
+                });
     }
 }

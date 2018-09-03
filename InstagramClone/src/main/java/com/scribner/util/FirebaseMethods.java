@@ -244,14 +244,29 @@ public class FirebaseMethods {
 
     public void updateUsername(String username) {
         Log.d(TAG, "updateUsername: to " + username);
+        //USERS NODE
         myRef.child(mContext.getString(R.string.dbname_users))
                 .child(userId)
                 .child(mContext.getString(R.string.field_username))
                 .setValue(username);
-
+        //USER_ACCOUNT_SETTINGS NODE
         myRef.child(mContext.getString(R.string.dbname_user_account_settings))
                 .child(userId)
                 .child(mContext.getString(R.string.field_username))
                 .setValue(username);
     }
+
+    /**
+     * Update email in user's node
+     * @param email
+     */
+    public void updateEmail(String email) {
+        Log.d(TAG, "updateUsername: to " + email);
+        myRef.child(mContext.getString(R.string.dbname_users))
+                .child(userId)
+                .child(mContext.getString(R.string.field_email))
+                .setValue(email);
+
+    }
+
 }
