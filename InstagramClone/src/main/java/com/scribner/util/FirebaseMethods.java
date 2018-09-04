@@ -140,6 +140,46 @@ public class FirebaseMethods {
     }
 
     /**
+     * Update user account settings
+     *
+     * @param displayName
+     * @param website
+     * @param description
+     * @param phoneNumber
+     */
+    public void updateUserAccountSettings(String displayName, String website, String description, long phoneNumber) {
+
+        if (displayName != null) {
+            myRef.child(mContext.getString(R.string.dbname_user_account_settings))
+                    .child(userId)
+                    .child(mContext.getString(R.string.field_display_name))
+                    .setValue(displayName);
+        }
+
+        if (phoneNumber != 0) {
+            myRef.child(mContext.getString(R.string.dbname_users))
+                    .child(userId)
+                    .child(mContext.getString(R.string.field_phone_number))
+                    .setValue(phoneNumber);
+        }
+
+        if (description != null) {
+            myRef.child(mContext.getString(R.string.dbname_user_account_settings))
+                    .child(userId)
+                    .child(mContext.getString(R.string.field_description))
+                    .setValue(description);
+        }
+
+        if (website != null) {
+            myRef.child(mContext.getString(R.string.dbname_user_account_settings))
+                    .child(userId)
+                    .child(mContext.getString(R.string.field_website))
+                    .setValue(website);
+        }
+
+    }
+
+    /**
      * Gets the account settings for the current user
      * Database: user_account_settings node
      *
@@ -258,6 +298,7 @@ public class FirebaseMethods {
 
     /**
      * Update email in user's node
+     *
      * @param email
      */
     public void updateEmail(String email) {

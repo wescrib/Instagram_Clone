@@ -116,18 +116,32 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
         //user totally changed their username. check for unique value
         if (!mUserSettings.getUser().getEmail().equals(email)) {
 
-            //1: reauthenticate email
+
             ConfirmPasswordDialog dialog = new ConfirmPasswordDialog();
             dialog.show(getFragmentManager(), getString(R.string.confirm_password_dialog));
             dialog.setTargetFragment(EditProfileFragment.this, 1);
-            //2: check if email already exists
 
-            //3: change the email
         }
-
-
+        /**
+         * remaining settings do not require any unique values
+         */
+        //update display name
+        if(!mUserSettings.getSettings().getDisplay_name().equals(displayName)){
+            mFirebaseMethods.updateUserAccountSettings(displayName, null, null, 0);
+        }
+        //update website
+        if(!mUserSettings.getSettings().getWebsite().equals(website)){
+            mFirebaseMethods.updateUserAccountSettings(null, website, null, 0);
+        }
+        //update Description
+        if(!mUserSettings.getSettings().getDescription().equals(description)){
+            mFirebaseMethods.updateUserAccountSettings(null, null, description, 0);
+        }
+        //update phone number
+        if(mUserSettings.getUser().getPhone_number() != phoneNumber){
+            mFirebaseMethods.updateUserAccountSettings(null, null, null, phoneNumber);
+        }
     }
-
 
     /**
      * checks if username already exists in database
