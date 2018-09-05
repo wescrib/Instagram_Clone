@@ -36,4 +36,12 @@
 
     <!-- dialog names -->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>
+
+    <!-- RANDOM STRINGS -->
+    <!-- share activity strings -->
+    <string name="gallery">GALLERY</string>
+    <string name="photo">PHOTO</string>
+
+
+
 </resources>
