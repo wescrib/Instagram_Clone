@@ -39,6 +39,8 @@
         <activity android:name="com.scribner.instagram.Login.LoginActivity"></activity>
         <activity android:name="com.scribner.instagram.Login.RegisterActivity"></activity>
         <activity android:name="com.scribner.instagram.Profile.AccountSettingsActivity"></activity>
+        <activity android:name="com.scribner.instagram.Share.NextActivity"></activity>
+
     </application>
 
 </manifest>

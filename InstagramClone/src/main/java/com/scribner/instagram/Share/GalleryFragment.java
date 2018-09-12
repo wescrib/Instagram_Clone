@@ -1,5 +1,6 @@
 package com.scribner.instagram.Share;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.flags.impl.DataUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -38,10 +40,11 @@ public class GalleryFragment extends Fragment {
     private Spinner directorySpinner;
 
     private ArrayList<String> directories;
+    private String mSelectedImage;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
         galleryImage = view.findViewById(R.id.galleryImageView);
         gridView = view.findViewById(R.id.gridView);
@@ -65,6 +68,11 @@ public class GalleryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to final share screen");
+                Intent intent = new Intent(getActivity(), NextActivity.class);
+                intent.putExtra(getString(R.string.selected_image), mSelectedImage);
+                startActivity(intent);
+
+
             }
         });
 
@@ -81,8 +89,15 @@ public class GalleryFragment extends Fragment {
             directories = FileSearch.getDirectoryPaths(filePaths.PICTURES);
         }
         directories.add(filePaths.CAMERA);
+        ArrayList<String> directoryNames = new ArrayList<>();
+        for (int i=0; i < directories.size(); i++){
+            int index = directories.get(i).lastIndexOf("/") + 1;
+            String name = directories.get(i).substring(index);
+            directoryNames.add(toTitleCase(name));
+        }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_spinner_item, directories);
+                android.R.layout.simple_spinner_item, directoryNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         directorySpinner.setAdapter(adapter);
         directorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -115,12 +130,15 @@ public class GalleryFragment extends Fragment {
 
         //set first image as big displayed imageview
         setImage(imgURLs.get(0), galleryImage, mAppend);
+        mSelectedImage = imgURLs.get(0);
         
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemClick: selected image: " + imgURLs.get(position));
                 setImage(imgURLs.get(position),galleryImage,mAppend);
+                mSelectedImage = imgURLs.get(position);
+
 
             }
         });
@@ -154,5 +172,21 @@ public class GalleryFragment extends Fragment {
 
             }
         });
+    }
+
+    private String toTitleCase(String s){
+        StringBuilder sb = new StringBuilder();
+        boolean nextWord = true;
+
+        for(char c: s.toCharArray()){
+            if( c == '_' || c == '-'){
+                nextWord = true;
+            }else if(nextWord){
+                c = Character.toTitleCase(c);
+                nextWord = false;
+            }
+            sb.append(c);
+        }
+        return sb.toString();
     }
 }
