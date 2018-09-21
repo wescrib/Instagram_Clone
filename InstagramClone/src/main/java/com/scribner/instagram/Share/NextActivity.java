@@ -17,7 +17,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.scribner.instagram.Login.LoginActivity;
 import com.scribner.instagram.R;
 import com.scribner.util.FirebaseMethods;
 import com.scribner.util.UniversalImageLoader;
@@ -34,14 +33,18 @@ public class NextActivity extends AppCompatActivity{
     private static final String TAG = "NextActivity";
     private static final String mAppend = "file:/";
 
+
+    private int imageCount = 0;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_next);
+        mFirebaseMethods = new FirebaseMethods(NextActivity.this);
 
         setUpFireBaseAuth();
 
-        ImageView backArrow = findViewById(R.id.ivCloseShare);
+        ImageView backArrow = findViewById(R.id.ivBackArrow);
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +63,7 @@ public class NextActivity extends AppCompatActivity{
 
             }
         });
+        setImage();
     }
 
     /**
@@ -69,6 +73,16 @@ public class NextActivity extends AppCompatActivity{
         Intent intent = getIntent();
         ImageView image = findViewById(R.id.imageShare);
         UniversalImageLoader.setImage(intent.getStringExtra(getString(R.string.selected_image)), image, null, mAppend);
+    }
+
+    private void uploadImage(){
+        //create a data model for photos
+
+        //add properties to photo objects (captions/description, dtg, image url, tags, user_id)
+
+        //get number of photos the user already has
+
+        //upload image to firebase (photos node and user_photos node
     }
 
     /*********************************************FIRE BASE***************************************/
@@ -100,6 +114,10 @@ public class NextActivity extends AppCompatActivity{
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                imageCount = mFirebaseMethods.getImageCount(dataSnapshot);
+                Log.d(TAG, "onDataChange: image count=" + imageCount);
+
 
                 //retrieve user info from firebase database
 

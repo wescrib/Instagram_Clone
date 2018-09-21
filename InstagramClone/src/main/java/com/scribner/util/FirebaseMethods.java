@@ -38,6 +38,19 @@ public class FirebaseMethods {
         }
     }
 
+    public int getImageCount(DataSnapshot snapshot){
+        int count = 0;
+
+        for(DataSnapshot ds : snapshot
+                .child(mContext.getString(R.string.dbname_user_photos))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .getChildren()){
+            count++;
+        }
+
+        return count;
+    }
+
 //    public boolean checkIfUsernameExists(String username, DataSnapshot snapshot) {
 //        Log.d(TAG, "checkIfUsernameExists: checking if " + username + "exists");
 //        User user = new User();
